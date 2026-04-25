@@ -1,3 +1,4 @@
+import { getPages } from "@/lib/pagesHelper";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PaginationProps {
@@ -9,7 +10,7 @@ interface PaginationProps {
 export function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
   if (totalPages <= 1) return null;
 
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const pages = getPages(page, totalPages);
 
   return (
     <div className="mt-8 flex items-center justify-center gap-2">
@@ -21,18 +22,24 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
         <ChevronLeft className="h-4 w-4" />
       </button>
 
-      {pages.map((p) => (
-        <button
-          key={p}
-          onClick={() => onPageChange(p)}
-          className={`h-9 cursor-pointer min-w-9 px-3 rounded-lg text-sm font-medium ${p === page
-            ? "bg-blue-500 text-white"
-            : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
-            }`}
-        >
-          {p}
-        </button>
-      ))}
+      {pages.map((p, index) =>
+        typeof p === "string" ? (
+          <span key={index} className="px-2 text-gray-400">
+            ...
+          </span>
+        ) : (
+          <button
+            key={p}
+            onClick={() => onPageChange(p)}
+            className={`h-9 min-w-9 px-3 rounded-lg text-sm font-medium ${p === page
+                ? "bg-blue-500 text-white"
+                : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
+              }`}
+          >
+            {p}
+          </button>
+        )
+      )}
 
       <button
         onClick={() => onPageChange(Math.min(totalPages, page + 1))}
